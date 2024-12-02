@@ -7,14 +7,17 @@ import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.targeting.Vision;
 
 
-public class Alignment extends Command {
+public class RotationalAlignment extends Command {
     Vision vision;
     SwerveDrive swerve;
     boolean isAligned;
+    int direction;
+
     double[] toleranceArray = {-0.5, 0.5}; //index 0 is bottom range, index 1 is highest possible value to be considered aligned
+
     PIDController pid = new PIDController(0, 0 , 0); //TODO figure out PID constants por favor
 
-    public Alignment(SwerveDrive swerve, Vision vision) {
+    public RotationalAlignment(SwerveDrive swerve, Vision vision) {
         // this.swerve = swerve;
         this.vision = vision;
         this.swerve = swerve;
@@ -32,21 +35,11 @@ public class Alignment extends Command {
     // @Override
     // public void execute() {
     //     double output = pid.calculate(vision.getYaw(), 0);
+
     //     if (vision.targetDetected()) { //positive yaw means we need to rotate clockwise, and negative yaw means to rotate counterclockwise
-    //         if (vision.getYaw() < 0) {
-    //             swerve.drive(new Translation2d(0, 0), output, false, false); //figure out how to fix rotation value using pid 
-
-    //         }
-
-    //         else if (vision.getYaw() > 0) {
-    //             swerve.drive(new Translation2d(0, 0), output, false, false); //figure out how to use rotation value with pid
-    //         }
-
-    //         else {
-    //             isAligned = true;
-    //             //do nothing if robot is already aligned
-    //         }
-    //     }   
+    //         swerve.drive(new Translation2d(0, 0), output, false, false);
+    //     }
+      
     // }
 
     //THE FOLLOWING CODE IS WITHOUT PID, IF TESTING PID UNCOMMENT OUT THE OTHER EXECUTE METHOD (and comment this execute() method out)
@@ -54,16 +47,14 @@ public class Alignment extends Command {
     public void execute() {
         if (vision.targetDetected()) {
             if (vision.getYaw() < toleranceArray[0]) {
-                swerve.drive(new Translation2d(0, 0), 1, false, false);
-            } 
-            
+                direction = 1;
+            }
             else if (vision.getYaw() > toleranceArray[1]) {
-                swerve.drive(new Translation2d(0, 0), -1, false, false);
+                direction = -1;
             }
+            else isAligned = true;
 
-            else {
-                isAligned = true;
-            }
+            swerve.drive(new Translation2d(0, 0), direction, false, false);
         }
     }
 
@@ -83,20 +74,13 @@ public class Alignment extends Command {
 
             return true;
         }
-        else return false;
+        return false;
     }
 
     //the following code is for the pid code (which is still in progress)
 
     // @Override
     // public boolean isFinished() {
-    //     if (isAligned) {
-    //         swerve.drive(new Translation2d(0, 0), 0, false, false);
-
-    //         swerve.stopMotors();
-
-    //         return true;
-    //     }
-    //     else return false;
+    //     return pid.atSetpoint();
     // }
 }

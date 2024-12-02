@@ -4,11 +4,13 @@ import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.swerve.CrabDrive;
 import frc.robot.commands.swerve.SwerveTeleop;
 import frc.robot.commands.swerve.TestFourModules;
-import frc.robot.commands.targeting.Alignment;
+import frc.robot.commands.targeting.RotationalAlignment;
+import frc.robot.commands.targeting.TransationalAlignment;
 import frc.robot.subsystems.swerve.SwerveDrive;
 import frc.robot.subsystems.swerve.SwerveModuleIO;
 import frc.robot.subsystems.swerve.SwerveModuleIOSim;
@@ -88,7 +90,9 @@ public class RobotContainer {
 
   private Vision vision;
 
-  private Alignment alignment;
+  private RotationalAlignment rotAlignment;
+
+  private TransationalAlignment transAlignment;
 
 
   public RobotContainer() {
@@ -104,13 +108,13 @@ public class RobotContainer {
     this.configureBindings();
 
 
-    camera=  new PhotonCamera("Microsoft_LifeCam_HD-3000 (1)");
+    camera = new PhotonCamera("Microsoft_LifeCam_HD-3000 (1)");
 
     vision = new Vision(camera);
 
-    alignment = new Alignment(swerve, vision);
+    rotAlignment = new RotationalAlignment(swerve, vision);
 
-
+    transAlignment = new TransationalAlignment(swerve, vision);
   }
 
   private void constructSwerve() {
@@ -212,10 +216,12 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return 
-    new SequentialCommandGroup(
+    return new SequentialCommandGroup(
+
       autoPaths.getAutonomousCommand(), 
-      alignment
+
+      new ParallelCommandGroup(rotAlignment, transAlignment)
+      
       );
     
   }
