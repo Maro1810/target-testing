@@ -94,6 +94,9 @@ public class RobotContainer {
 
   private TransationalAlignment transAlignment;
 
+  private String cameraName = "h";
+
+
 
   public RobotContainer() {
 
@@ -103,18 +106,16 @@ public class RobotContainer {
     // Create swerve commands - DO NOT REMOVE THIS
     this.createSwerveCommands();
 
+    camera = new PhotonCamera(cameraName);
+    vision = new Vision(camera);
+
     
     // Construct all other things
     this.configureBindings();
 
+    autoPaths = new InitializeAutoPaths(swerve);
 
-    camera = new PhotonCamera("Microsoft_LifeCam_HD-3000 (1)");
-
-    vision = new Vision(camera);
-
-    rotAlignment = new RotationalAlignment(swerve, vision);
-
-    transAlignment = new TransationalAlignment(swerve, vision);
+    
   }
 
   private void constructSwerve() {
@@ -213,16 +214,17 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+
+
+
+
+    // rotAlignment = new RotationalAlignment(swerve, vision);
+
+    // transAlignment = new TransationalAlignment(swerve, vision);
   }
 
   public Command getAutonomousCommand() {
-    return new SequentialCommandGroup(
-
-      autoPaths.getAutonomousCommand(), 
-
-      new ParallelCommandGroup(rotAlignment, transAlignment)
-      
-      );
+    return autoPaths.getAutonomousCommand();
     
   }
 

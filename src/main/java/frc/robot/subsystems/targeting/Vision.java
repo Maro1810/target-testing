@@ -3,6 +3,7 @@ package frc.robot.subsystems.targeting;
 import java.util.List;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.proto.Photon;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -16,10 +17,10 @@ public class Vision extends SubsystemBase{
     PhotonCamera camera;
     Transform3d targetData;
     
-    public Vision(PhotonCamera camera1) {
-        camera = camera1;
-        PortForwarder.add(5800, "photonvision", 5800);
+    public Vision(PhotonCamera camera) {
+        this.camera = camera;
         camera.setPipelineIndex(0);
+        
     }
 
     //returns whether a target (AprilTag) has been detected
@@ -42,6 +43,9 @@ public class Vision extends SubsystemBase{
         }
         return yaw;
     }
+
+
+    
     //gets target data such as x and y offset, rotational offset, and returns everything as a Transform3d 
     public Transform3d getTargetData() {
         List<PhotonPipelineResult> results = camera.getAllUnreadResults();
@@ -55,6 +59,9 @@ public class Vision extends SubsystemBase{
         }
         return null;
         }
+
+
+    
     
     //returns the current horizontal displacement with respect to the AprilTag (uses getY() because the Y offset in PhotonVision is the horizontal axis)
     public double getHorizontalDisplacement() {
@@ -63,6 +70,8 @@ public class Vision extends SubsystemBase{
         }
         else return 0;
     }
+
+
 
     @Override
     public void periodic() {
