@@ -94,7 +94,7 @@ public class RobotContainer {
 
   private TransationalAlignment transAlignment;
 
-  private String cameraName = "h";
+  private String cameraName = "bestcamera";
 
 
 
@@ -108,6 +108,8 @@ public class RobotContainer {
 
     camera = new PhotonCamera(cameraName);
     vision = new Vision(camera);
+    rotAlignment = new RotationalAlignment(swerve, vision);
+    transAlignment = new TransationalAlignment(swerve, vision);
 
     
     // Construct all other things
@@ -224,7 +226,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return autoPaths.getAutonomousCommand();
+    return rotAlignment;
     
   }
 

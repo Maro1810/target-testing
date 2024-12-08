@@ -25,38 +25,38 @@ public class Vision extends SubsystemBase{
 
     //returns whether a target (AprilTag) has been detected
     public boolean targetDetected() {
-        List<PhotonPipelineResult> results = camera.getAllUnreadResults();
-        for (PhotonPipelineResult result : results) {
-            if (result.hasTargets()) {
-                return true;
-            }
+        PhotonPipelineResult result = camera.getLatestResult();
+
+        if (result.hasTargets()) {
+            return true;
         }
         return false;
     }
 
     public double getYaw() {
-        List<PhotonPipelineResult> results = camera.getAllUnreadResults();
-        double yaw = 0.0;
-        for (PhotonPipelineResult result : results) {
-            PhotonTrackedTarget target = result.getBestTarget();
-            yaw = target.getYaw();
+        PhotonPipelineResult result = camera.getLatestResult();
+
+        PhotonTrackedTarget target = result.getBestTarget();
+        
+        if (target != null) {
+            double yaw = target.getYaw();
+            
+            return yaw;
         }
-        return yaw;
+        return 0.0;
     }
 
 
     
     //gets target data such as x and y offset, rotational offset, and returns everything as a Transform3d 
     public Transform3d getTargetData() {
-        List<PhotonPipelineResult> results = camera.getAllUnreadResults();
+        PhotonPipelineResult result = camera.getLatestResult();
         if (targetDetected()) {
-            for (PhotonPipelineResult result : results) {
-                PhotonTrackedTarget target = result.getBestTarget();
+            PhotonTrackedTarget target = result.getBestTarget();
                 if (target != null) {
                     return target.getBestCameraToTarget();
                 }
             }
-        }
         return null;
         }
 
@@ -81,6 +81,8 @@ public class Vision extends SubsystemBase{
         //output values to SmartDashboard/Shuffleboard
         SmartDashboard.putBoolean("Target Detected", targetDetected());
         SmartDashboard.putNumber("Yaw Angle", getYaw());
+
+        SmartDashboard.putNumber("Horizontal Displacement", getHorizontalDisplacement());
     }
 
 }

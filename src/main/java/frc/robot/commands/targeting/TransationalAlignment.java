@@ -12,7 +12,7 @@ public class TransationalAlignment extends Command {
     boolean isAligned;
     int direction;
 
-    double[] toleranceArray = {-3, 3};
+    double[] toleranceArray = {-0.05, 0.05};
 
     PIDController pid = new PIDController(0, 0, 0); //TODO find pid constants
 
